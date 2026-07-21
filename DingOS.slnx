@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DingOS.csproj" />
+  <Project Path="../DingOS.Playground/DingOS.Playground.csproj" />
+</Solution>

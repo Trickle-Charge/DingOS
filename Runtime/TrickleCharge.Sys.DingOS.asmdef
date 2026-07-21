@@ -1,0 +1,14 @@
+{
+  "name": "TrickleCharge.Sys.DingOS",
+  "rootNamespace": "TrickleCharge.Sys.DingOS",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

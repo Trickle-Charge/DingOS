@@ -1,0 +1,116 @@
+using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Help;
+using System.IO;
+using System.Text;
+
+namespace TrickleCharge.Sys.DingOS
+{
+public class CommandShell : Command
+{
+    /// <summary>
+    /// Gets the output writer for the currently executing command.
+    /// </summary>
+    public TextWriter Out { get; private set; } = TextWriter.Null;
+
+    /// <summary>
+    /// Gets the error writer for the currently executing command.
+    /// </summary>
+    public TextWriter Error { get; private set; } = TextWriter.Null;
+
+    /// <summary>
+    /// Signals when a command or module requests the screen to be cleared.
+    /// </summary>
+    public event Action? ClearRequested;
+
+    /// <summary>
+    /// Signals when a command or module requests the shell to quit.
+    /// </summary>
+    public event Action? QuitRequested;
+
+    public DateTime StartTime { get; } = DateTime.Now;
+    public TimeSpan Uptime => DateTime.Now - StartTime;
+
+    public CommandShell(string name = System.ApplicationName, string description = System.VersionString)
+        : base(name, description)
+    {
+        Options.Add(new HelpOption());
+    }
+
+    public void RegisterModule(ICommandModule module)
+    {
+        if (module == null) { throw new ArgumentNullException(nameof(module)); }
+
+        module.Register(this);
+    }
+
+    public void RegisterCommand(Command command)
+    {
+        if (command == null) { throw new ArgumentNullException(nameof(command)); }
+
+        Subcommands.Add(command);
+    }
+
+    public void RegisterCommand(IEnumerable<Command> commands)
+    {
+        foreach (Command command in commands) { RegisterCommand(command); }
+    }
+
+    public void RequestClear() => ClearRequested?.Invoke();
+
+    public void RequestQuit() => QuitRequested?.Invoke();
+
+    public ShellResult Execute(string commandLine)
+    {
+        if (string.IsNullOrWhiteSpace(commandLine))
+        {
+            return new ShellResult(0, string.Empty, string.Empty);
+        }
+
+        StringBuilder outputBuffer = new();
+        StringBuilder errorBuffer = new();
+
+        using StringWriter stdOutWriter = new(outputBuffer);
+        using StringWriter stdErrWriter = new(errorBuffer);
+
+        Out = stdOutWriter;
+        Error = stdErrWriter;
+
+        InvocationConfiguration config = new()
+        {
+            Output = stdOutWriter,
+            Error = stdErrWriter
+        };
+
+        TextWriter originalConsoleOut = Console.Out;
+        TextWriter originalConsoleError = Console.Error;
+
+        int exitCode;
+
+        try
+        {
+            // Capture any fallback Console.WriteLine calls during execution
+            Console.SetOut(stdOutWriter);
+            Console.SetError(stdErrWriter);
+
+            exitCode = Parse(commandLine).Invoke(config);
+        }
+        finally
+        {
+            // Restore console state and unbind execution writers
+            Console.SetOut(originalConsoleOut);
+            Console.SetError(originalConsoleError);
+
+            Out = TextWriter.Null;
+            Error = TextWriter.Null;
+        }
+
+        return new ShellResult(
+            exitCode,
+            outputBuffer.ToString().TrimEnd(),
+            errorBuffer.ToString().TrimEnd()
+        );
+    }
+}
+}
