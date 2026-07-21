@@ -29,10 +29,10 @@ public class CommandShell : Command
     /// </summary>
     public event Action? QuitRequested;
 
-    public DateTime StartTime { get; } = DateTime.Now;
-    public TimeSpan Uptime => DateTime.Now - StartTime;
+    public DateTime StartTime { get; } = DateTime.UtcNow;
+    public TimeSpan Uptime => DateTime.UtcNow - StartTime;
 
-    public CommandShell(string name = System.ApplicationName, string description = System.VersionString)
+    public CommandShell(string name = SystemInfo.ApplicationName, string description = SystemInfo.VersionString)
         : base(name, description)
     {
         Options.Add(new HelpOption());

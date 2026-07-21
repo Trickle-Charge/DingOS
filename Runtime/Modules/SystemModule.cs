@@ -68,7 +68,7 @@ public class SystemModule : ICommandModule
             Aliases = { "ver" }
         };
 
-        sysInfoCmd.SetAction(_ => shell.Out.WriteLine(System.VersionString));
+        sysInfoCmd.SetAction(_ => shell.Out.WriteLine(SystemInfo.VersionString));
 
         return sysInfoCmd;
     }
