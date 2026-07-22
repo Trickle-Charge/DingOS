@@ -5,6 +5,7 @@ public class ShellContext : IShellContext, IDisposable
 {
     public string Name { get; }
     public string Prompt { get; }
+    public CommandShell CommandShell { get; }
 
     /// <inheritdoc />
     public event Action? ClearRequested;
@@ -12,7 +13,6 @@ public class ShellContext : IShellContext, IDisposable
     /// <inheritdoc />
     public event Action? QuitRequested;
 
-    private readonly CommandShell _commandShell;
     private readonly Action<ITerminal>? _onEnter;
     private readonly Action<ITerminal>? _onExit;
 
@@ -25,18 +25,18 @@ public class ShellContext : IShellContext, IDisposable
     {
         Name = name;
         Prompt = prompt;
-        _commandShell = commandShell;
+        CommandShell = commandShell;
         _onEnter = onEnter;
         _onExit = onExit;
 
-        _commandShell.ClearRequested += OnShellClearRequested;
-        _commandShell.QuitRequested += OnShellQuitRequested;
+        CommandShell.ClearRequested += OnShellClearRequested;
+        CommandShell.QuitRequested += OnShellQuitRequested;
     }
 
     private void OnShellClearRequested() => ClearRequested?.Invoke();
     private void OnShellQuitRequested() => QuitRequested?.Invoke();
 
-    public ShellResult ProcessInput(string input) => _commandShell.Execute(input);
+    public ShellResult ProcessInput(string input) => CommandShell.Execute(input);
 
     public void Activate(ITerminal terminal) => _onEnter?.Invoke(terminal);
 
@@ -44,8 +44,8 @@ public class ShellContext : IShellContext, IDisposable
 
     public void Dispose()
     {
-        _commandShell.ClearRequested -= OnShellClearRequested;
-        _commandShell.QuitRequested -= OnShellQuitRequested;
+        CommandShell.ClearRequested -= OnShellClearRequested;
+        CommandShell.QuitRequested -= OnShellQuitRequested;
     }
 }
 }

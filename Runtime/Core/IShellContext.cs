@@ -6,6 +6,7 @@ public interface IShellContext
 {
     string Name { get; }
     string Prompt { get; }
+    CommandShell CommandShell { get; }
 
     event Action? ClearRequested;
     event Action? QuitRequested;
