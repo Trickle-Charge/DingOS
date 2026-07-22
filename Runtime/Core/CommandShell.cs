@@ -7,7 +7,7 @@ using System.Text;
 
 namespace TrickleCharge.Sys.DingOS
 {
-public class CommandShell : Command
+public sealed class CommandShell : Command
 {
     /// <summary>
     /// Gets the output writer for the currently executing command.
