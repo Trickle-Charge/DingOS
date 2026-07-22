@@ -4,9 +4,9 @@ using TrickleCharge.Sys.DingOS.Shell;
 
 namespace TrickleCharge.Sys.DingOS.Terminal
 {
-public class TerminalSession
+public class TerminalSession<T> where T : ITerminal, new()
 {
-    public readonly ConsoleTerminal Terminal = new();
+    public readonly T Terminal = new();
 
     public TerminalSession(IDevice device)
     {
