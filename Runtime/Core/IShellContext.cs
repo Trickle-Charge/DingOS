@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TrickleCharge.Sys.DingOS
 {
@@ -11,7 +14,11 @@ public interface IShellContext
     event Action? ClearRequested;
     event Action? QuitRequested;
 
-    ShellResult ProcessInput(string input);
+    Task<ShellResult> ProcessInputAsync(
+        string input,
+        TextWriter? outputWriter = null,
+        TextWriter? errorWriter = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Called when this context becomes active on top of the stack

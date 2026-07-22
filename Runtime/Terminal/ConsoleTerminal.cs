@@ -1,14 +1,18 @@
 using System;
+using System.IO;
 
 namespace TrickleCharge.Sys.DingOS.Terminal
 {
 public class ConsoleTerminal : ITerminal
 {
-    /// <inheritdoc />
-    public void Write(string text) =>  Console.Write(text);
+    private readonly TextWriter _out = Console.Out;
+    private readonly TextWriter _error = Console.Error;
 
     /// <inheritdoc />
-    public void WriteLine(string text) => Console.WriteLine(text);
+    public void Write(string text) => _out.Write(text);
+
+    /// <inheritdoc />
+    public void WriteLine(string text) => _error.WriteLine(text);
 
     /// <inheritdoc />
     public void WriteError(string text)

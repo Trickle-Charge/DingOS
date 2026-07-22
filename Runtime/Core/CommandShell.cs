@@ -4,6 +4,8 @@ using System.CommandLine;
 using System.CommandLine.Help;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TrickleCharge.Sys.DingOS
 {
@@ -61,7 +63,11 @@ public sealed class CommandShell : Command
 
     public void RequestQuit() => QuitRequested?.Invoke();
 
-    public ShellResult Execute(string commandLine)
+    public async Task<ShellResult> ExecuteAsync(
+        string commandLine,
+        TextWriter? outputWriter = null,
+        TextWriter? errorWriter = null,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(commandLine))
         {
@@ -71,8 +77,8 @@ public sealed class CommandShell : Command
         StringBuilder outputBuffer = new();
         StringBuilder errorBuffer = new();
 
-        using StringWriter stdOutWriter = new(outputBuffer);
-        using StringWriter stdErrWriter = new(errorBuffer);
+        await using TextWriter stdOutWriter = outputWriter ?? new StringWriter(outputBuffer);
+        await using TextWriter stdErrWriter = errorWriter ?? new StringWriter(errorBuffer);
 
         Out = stdOutWriter;
         Error = stdErrWriter;
@@ -94,7 +100,7 @@ public sealed class CommandShell : Command
             Console.SetOut(stdOutWriter);
             Console.SetError(stdErrWriter);
 
-            exitCode = Parse(commandLine).Invoke(config);
+            exitCode = await Parse(commandLine).InvokeAsync(config, cancellationToken);
         }
         finally
         {

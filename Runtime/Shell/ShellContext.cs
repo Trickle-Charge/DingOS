@@ -1,3 +1,7 @@
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace TrickleCharge.Sys.DingOS.Shell
 {
 using System;
@@ -36,7 +40,12 @@ public class ShellContext : IShellContext, IDisposable
     private void OnShellClearRequested() => ClearRequested?.Invoke();
     private void OnShellQuitRequested() => QuitRequested?.Invoke();
 
-    public ShellResult ProcessInput(string input) => CommandShell.Execute(input);
+    public Task<ShellResult> ProcessInputAsync(
+        string input,
+        TextWriter? outputWriter = null,
+        TextWriter? errorWriter = null,
+        CancellationToken cancellationToken = default)
+        => CommandShell.ExecuteAsync(input, outputWriter, errorWriter, cancellationToken);
 
     public void Activate(ITerminal terminal) => _onEnter?.Invoke(terminal);
 

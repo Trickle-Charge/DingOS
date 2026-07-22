@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TrickleCharge.Sys.DingOS.Devices;
-using TrickleCharge.Sys.DingOS.Jobs;
 using TrickleCharge.Sys.DingOS.Shell;
 
 namespace TrickleCharge.Sys.DingOS.Networking.Modules
@@ -13,16 +12,13 @@ namespace TrickleCharge.Sys.DingOS.Networking.Modules
 public class NetworkModule : ICommandModule
 {
     private readonly IShellContextStack _contextStack;
-    private readonly IJobManager _jobManager;
 
     private readonly IDeviceDirectory _deviceDirectory;
-    public NetworkModule(IShellContextStack contextStack, IDeviceDirectory deviceDirectory, IJobManager jobManager)
+    public NetworkModule(IShellContextStack contextStack, IDeviceDirectory deviceDirectory)
     {
         _deviceDirectory = deviceDirectory;
         _contextStack = contextStack
                         ?? throw new ArgumentNullException(nameof(contextStack));
-        _jobManager = jobManager
-                      ?? throw new ArgumentNullException(nameof(jobManager));
     }
 
     public void Register(CommandShell shell)
@@ -31,7 +27,7 @@ public class NetworkModule : ICommandModule
 
         netCommand.Subcommands.Add(Connect(shell, _contextStack, _deviceDirectory));
         netCommand.Subcommands.Add(List(shell, _deviceDirectory));
-        netCommand.Subcommands.Add(Ping(shell, _jobManager));
+        netCommand.Subcommands.Add(PingAsync(shell));
 
         shell.RegisterCommand(netCommand);
     }
@@ -59,7 +55,7 @@ public class NetworkModule : ICommandModule
                 ShellContext remoteContext = targetDevice.RequestShell();
 
                 remoteContext.CommandShell.RegisterModule(
-                    new NetworkModule(contextStack, targetDevice.NetworkDirectory, targetDevice.JobManager)
+                    new NetworkModule(contextStack, targetDevice.NetworkDirectory)
                 );
 
                 contextStack.PushContext(remoteContext);
@@ -87,11 +83,11 @@ public class NetworkModule : ICommandModule
         return listCmd;
     }
 
-    public static Command Ping(CommandShell shell, IJobManager jobManager)
+    public static Command PingAsync(CommandShell shell)
     {
         Command pingCmd = new("ping", "Ping host.") { s_hostArgument };
 
-        pingCmd.SetAsyncAction(shell, jobManager, static async (parseResult, outWriter, cancellationToken) =>
+        pingCmd.SetAction(async (parseResult, cancellationToken) =>
         {
             string? host = parseResult.GetValue(s_hostArgument);
 
@@ -99,7 +95,7 @@ public class NetworkModule : ICommandModule
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await Task.Delay(1000, cancellationToken);
-                await outWriter.WriteLineAsync($"Reply from {host}: bytes=32 time={i}ms");
+                await shell.Out.WriteLineAsync($"Reply from {host}: bytes=32 time={i}ms");
             }
         });
 

@@ -22,7 +22,6 @@ public class Device : IDevice
         CommandShell shell = new CommandShell()
             .WithInteractiveDefaults()
             .WithModule(new JobControlModule(JobManager));
-            //.WithModule(new NetworkModule(contextStack, NetworkDirectory, JobManager));
 
         ShellContext rootContext = new(
             name: Name,
