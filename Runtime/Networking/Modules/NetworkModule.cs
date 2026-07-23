@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using TrickleCharge.Sys.DingOS.Devices;
@@ -72,7 +72,7 @@ public class NetworkModule : ICommandModule
     {
         Command listCmd = new("list", "List all available devices.");
 
-        listCmd.SetAction(parseResult =>
+        listCmd.SetAction(_ =>
         {
             foreach (KeyValuePair<string, IDevice> device in deviceDirectory)
             {
@@ -89,33 +89,18 @@ public class NetworkModule : ICommandModule
 
         pingCmd.SetAction(async (parseResult, cancellationToken) =>
         {
-            string? host = parseResult.GetValue(s_hostArgument);
+            string host = parseResult.GetValue(s_hostArgument) ?? "unknown";
+            Stopwatch sw = new();
 
             for (int i = 1; i <= 5; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await Task.Delay(1000, cancellationToken);
-                await shell.Out.WriteLineAsync($"Reply from {host}: bytes=32 time={i}ms");
-            }
-        });
 
-        return pingCmd;
-    }
+                sw.Restart();
+                await Task.Delay(100, cancellationToken);
+                sw.Stop();
 
-    public static Command Ping(CommandShell shell)
-    {
-        const int timeout = 1000;
-
-        Command pingCmd = new("ping", "Ping host.") { s_hostArgument };
-
-        pingCmd.SetAction(parseResult =>
-        {
-            string? host = parseResult.GetValue(s_hostArgument);
-
-            for (int i = 1; i <= 5; i++)
-            {
-                Thread.Sleep(timeout);
-                shell.Out.WriteLine($"Reply from {host}: bytes=32 time={DateTime.UtcNow.Millisecond}ms");
+                await shell.Out.WriteLineAsync($"Reply from {host}: bytes=32 time={sw.ElapsedMilliseconds}ms");
             }
         });
 
