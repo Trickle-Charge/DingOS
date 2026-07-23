@@ -30,8 +30,15 @@ public class ConsoleTerminal : ITerminal
     /// <inheritdoc />
     public async Task<string> ReadLineAsync(CancellationToken cancellationToken = default)
     {
-        string? input = await Console.In.ReadLineAsync();
-        return input ?? string.Empty;
+        Task<string?> readTask = Task.Run<string?>(static () => Console.ReadLine(), cancellationToken);
+        Task completedTask = await Task.WhenAny(readTask, Task.Delay(Timeout.Infinite, cancellationToken));
+
+        if (completedTask != readTask)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        return await readTask ?? string.Empty;
     }
 
     /// <inheritdoc />
