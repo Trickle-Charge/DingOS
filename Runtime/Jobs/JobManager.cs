@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ public sealed class JobManager : IJobManager
     private readonly ConcurrentDictionary<int, Job> _jobs = new();
     private int _nextPid = 1;
 
-    public IEnumerable<Job> ActiveJobs => _jobs.Values;
+    public IEnumerable<Job> ActiveJobs => _jobs.Values.Where(static j => j.Status == JobStatus.Running);
 
     public Job StartJob(string name, Func<Job, CancellationToken, Task> work)
     {
@@ -37,6 +38,12 @@ public sealed class JobManager : IJobManager
         }, job.CancellationToken);
 
         job.AttachTask(runningTask);
+        // TODO Probably don't want to immediately remove the task.
+        // Maybe treat tasks like a FIFO queue and keep x amount of complete tasks?
+        _ = runningTask.ContinueWith(_ =>
+        {
+            _jobs.Remove(pid, out Job _);
+        });
         return job;
     }
 
@@ -52,6 +59,17 @@ public sealed class JobManager : IJobManager
     {
         _jobs.TryGetValue(pid, out Job? job);
         return job;
+    }
+
+    public void PruneCompletedJobs()
+    {
+        foreach (KeyValuePair<int, Job> kvp in _jobs)
+        {
+            if (kvp.Value.Status != JobStatus.Running)
+            {
+                _jobs.TryRemove(kvp.Key, out _);
+            }
+        }
     }
 }
 }
