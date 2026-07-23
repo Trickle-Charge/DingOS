@@ -69,10 +69,7 @@ public sealed class CommandShell : Command
         TextWriter? errorWriter = null,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(commandLine))
-        {
-            return new ShellResult(0, string.Empty, string.Empty);
-        }
+        if (string.IsNullOrWhiteSpace(commandLine)) { return ShellResult.Empty; }
 
         StringBuilder outputBuffer = new();
         StringBuilder errorBuffer = new();

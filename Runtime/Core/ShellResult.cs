@@ -14,5 +14,7 @@ public readonly struct ShellResult
         Output = string.IsNullOrWhiteSpace(output) ? string.Empty : output;
         Error = string.IsNullOrWhiteSpace(error) ? string.Empty : error;
     }
+
+    public static ShellResult Empty => new(0, string.Empty, string.Empty);
 }
 }
