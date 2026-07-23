@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Help;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,17 +70,10 @@ public sealed class CommandShell : Command
     {
         if (string.IsNullOrWhiteSpace(commandLine)) { return ShellResult.Empty; }
 
-        StringBuilder outputBuffer = new();
-        StringBuilder errorBuffer = new();
+        using CommandOutputScope outputScope = new(outputWriter, errorWriter);
 
-        bool ownsOut = outputWriter == null;
-        bool ownsErr = errorWriter == null;
-
-        TextWriter stdOutWriter = outputWriter ?? new StringWriter(outputBuffer);
-        TextWriter stdErrWriter = errorWriter ?? new StringWriter(errorBuffer);
-
-        Out = stdOutWriter;
-        Error = stdErrWriter;
+        Out = outputScope.OutputWriter;
+        Error = outputScope.ErrorWriter;
 
         int exitCode;
 
@@ -89,8 +81,8 @@ public sealed class CommandShell : Command
         {
             InvocationConfiguration config = new()
             {
-                Output = stdOutWriter,
-                Error = stdErrWriter
+                Output = outputScope.OutputWriter,
+                Error = outputScope.ErrorWriter
             };
 
             exitCode = await Parse(commandLine).InvokeAsync(config, cancellationToken);
@@ -99,15 +91,12 @@ public sealed class CommandShell : Command
         {
             Out = TextWriter.Null;
             Error = TextWriter.Null;
-
-            if (ownsOut) { await stdOutWriter.DisposeAsync(); }
-            if (ownsErr) { await stdErrWriter.DisposeAsync(); }
         }
 
         return new ShellResult(
             exitCode,
-            outputBuffer.ToString().TrimEnd(),
-            errorBuffer.ToString().TrimEnd()
+            outputScope.GetOutputText(),
+            outputScope.GetErrorText()
         );
     }
 }
