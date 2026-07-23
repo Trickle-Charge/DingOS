@@ -89,25 +89,14 @@ public sealed class CommandShell : Command
             Error = stdErrWriter
         };
 
-        TextWriter originalConsoleOut = Console.Out;
-        TextWriter originalConsoleError = Console.Error;
-
         int exitCode;
 
         try
         {
-            // Capture any fallback Console.WriteLine calls during execution
-            Console.SetOut(stdOutWriter);
-            Console.SetError(stdErrWriter);
-
             exitCode = await Parse(commandLine).InvokeAsync(config, cancellationToken);
         }
         finally
         {
-            // Restore console state and unbind execution writers
-            Console.SetOut(originalConsoleOut);
-            Console.SetError(originalConsoleError);
-
             Out = TextWriter.Null;
             Error = TextWriter.Null;
         }
