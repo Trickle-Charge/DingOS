@@ -74,6 +74,7 @@ public class NetworkModule : ICommandModule
     public static Command List(CommandShell shell, IDeviceDirectory deviceDirectory)
     {
         Command listCmd = new("list", "List all available devices.");
+        listCmd.Aliases.Add("ls");
 
         listCmd.SetAction(_ =>
         {
