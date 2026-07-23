@@ -18,7 +18,11 @@ public class ShellContextManager : IShellContextStack
     {
         if (newContext == null) { throw new ArgumentNullException(nameof(newContext)); }
 
-        if (CurrentContext != null) { UnbindContextEvents(CurrentContext); }
+        if(CurrentContext != null)
+        {
+            UnbindContextEvents(CurrentContext);
+            CurrentContext.Deactivate(_terminal);
+        }
 
         _contextStack.Push(newContext);
         BindContextEvents(newContext);
