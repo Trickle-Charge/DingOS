@@ -36,7 +36,7 @@ public class TerminalSession<T> where T : ITerminal, new()
         while (_contextManager.CurrentContext != null && !cancellationToken.IsCancellationRequested)
         {
             Terminal.Write(_contextManager.ActivePrompt);
-            string input = Terminal.ReadLine();
+            string input = await Terminal.ReadLineAsync(cancellationToken);
 
             await _contextManager.CurrentContext.ProcessInputAsync(
                 input,

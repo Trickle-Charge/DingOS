@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace TrickleCharge.Sys.DingOS
 {
 public interface ITerminal
@@ -6,6 +9,7 @@ public interface ITerminal
     void WriteLine(string text);
     void WriteError(string text);
     string ReadLine();
+    Task<string> ReadLineAsync(CancellationToken cancellationToken = default);
     void Clear();
 }
 }
