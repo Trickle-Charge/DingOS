@@ -15,10 +15,8 @@ public class SystemModule : ICommandModule
 
     public static Command Exit(CommandShell shell)
     {
-        Command exitCmd = new("exit", "Exits the command shell.")
-        {
-            Aliases = { "quit" }
-        };
+        Command exitCmd = new("exit", "Exits the command shell.");
+        exitCmd.Aliases.Add("quit");
 
         exitCmd.SetAction(_ => shell.RequestQuit());
 
@@ -45,10 +43,8 @@ public class SystemModule : ICommandModule
 
     public static Command Clear(CommandShell shell)
     {
-        Command clearCmd = new("clear", "Clears the terminal screen buffer.")
-        {
-            Aliases = { "clr" }
-        };
+        Command clearCmd = new("clear", "Clears the terminal screen buffer.");
+        clearCmd.Aliases.Add("clr");
 
         clearCmd.SetAction(_ => shell.RequestClear());
 
@@ -57,10 +53,8 @@ public class SystemModule : ICommandModule
 
     public static Command SysInfo(CommandShell shell)
     {
-        Command sysInfoCmd = new("sysinfo", "Displays system information.")
-        {
-            Aliases = { "ver" }
-        };
+        Command sysInfoCmd = new("sysinfo", "Displays system information.");
+        sysInfoCmd.Aliases.Add("ver");
 
         sysInfoCmd.SetAction(_ => shell.Out.WriteLine(SystemInfo.VersionString));
 
