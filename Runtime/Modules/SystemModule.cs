@@ -27,7 +27,7 @@ public class SystemModule : ICommandModule
     {
         Command helpCmd = new("help", "Displays help information.");
 
-        helpCmd.SetAction(_ =>
+        helpCmd.SetAction(async (_, cancellationToken) =>
         {
             InvocationConfiguration config = new()
             {
@@ -35,7 +35,7 @@ public class SystemModule : ICommandModule
                 Error = shell.Error
             };
 
-            shell.Parse("--help").Invoke(config);
+            await shell.Parse("--help").InvokeAsync(config, cancellationToken);
         });
 
         return helpCmd;
