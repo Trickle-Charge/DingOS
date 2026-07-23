@@ -1,3 +1,4 @@
+using System;
 using System.CommandLine;
 
 namespace TrickleCharge.Sys.DingOS.Modules
@@ -26,17 +27,35 @@ public class CoreShellModule : ICommandModule
 
     public static Command Help(CommandShell shell)
     {
-        Command helpCmd = new("help", "Displays help information.");
-
-        helpCmd.SetAction(async (_, cancellationToken) =>
+        Argument<string[]> topicArg = new("topic")
         {
-            InvocationConfiguration config = new()
-            {
-                Output = shell.Out,
-                Error = shell.Error
-            };
+            Description = "Optional command or subcommand to get help for.",
+            Arity = ArgumentArity.ZeroOrMore
+        };
 
-            await shell.Parse("--help").InvokeAsync(config, cancellationToken);
+        Command helpCmd = new("help", "Displays help information.") { topicArg };
+
+        helpCmd.SetAction(async (parseResult, cancellationToken) =>
+        {
+            string[] targetArgs = parseResult.GetValue(topicArg) ?? Array.Empty<string>();
+
+            if (targetArgs.Length == 0)
+            {
+                await shell.ExecuteAsync("--help", shell.Out, shell.Error, cancellationToken);
+                return;
+            }
+
+            string rawQuery = string.Join(" ", targetArgs);
+            ParseResult check = shell.Parse(rawQuery);
+
+            // Check if topic is invalid (didn't match a subcommand OR has trailing unmatched tokens)
+            if (check.CommandResult.Command == shell || check.UnmatchedTokens.Count > 0)
+            {
+                await shell.Error.WriteLineAsync($"Unrecognized command or topic '{rawQuery}'.");
+                return;
+            }
+
+            await shell.ExecuteAsync($"{rawQuery} --help", shell.Out, shell.Error, cancellationToken);
         });
 
         return helpCmd;
