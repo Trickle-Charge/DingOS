@@ -39,5 +39,19 @@ public class TerminalTextWriter : TextWriter
             _terminal.Write(value.ToString());
         }
     }
+
+    public override void Write(string? value)
+    {
+        if (string.IsNullOrEmpty(value)) { return; }
+
+        if (_isError)
+        {
+            _terminal.WriteError(value);
+        }
+        else
+        {
+            _terminal.Write(value);
+        }
+    }
 }
 }
