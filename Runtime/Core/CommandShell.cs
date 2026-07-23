@@ -77,28 +77,34 @@ public sealed class CommandShell : Command
         StringBuilder outputBuffer = new();
         StringBuilder errorBuffer = new();
 
-        await using TextWriter stdOutWriter = outputWriter ?? new StringWriter(outputBuffer);
-        await using TextWriter stdErrWriter = errorWriter ?? new StringWriter(errorBuffer);
+        bool ownsOut = outputWriter == null;
+        bool ownsErr = errorWriter == null;
+
+        TextWriter stdOutWriter = outputWriter ?? new StringWriter(outputBuffer);
+        TextWriter stdErrWriter = errorWriter ?? new StringWriter(errorBuffer);
 
         Out = stdOutWriter;
         Error = stdErrWriter;
-
-        InvocationConfiguration config = new()
-        {
-            Output = stdOutWriter,
-            Error = stdErrWriter
-        };
 
         int exitCode;
 
         try
         {
+            InvocationConfiguration config = new()
+            {
+                Output = stdOutWriter,
+                Error = stdErrWriter
+            };
+
             exitCode = await Parse(commandLine).InvokeAsync(config, cancellationToken);
         }
         finally
         {
             Out = TextWriter.Null;
             Error = TextWriter.Null;
+
+            if (ownsOut) { await stdOutWriter.DisposeAsync(); }
+            if (ownsErr) { await stdErrWriter.DisposeAsync(); }
         }
 
         return new ShellResult(
