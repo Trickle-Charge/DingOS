@@ -8,15 +8,9 @@ public class SystemModule : ICommandModule
     /// <inheritdoc />
     public void Register(CommandShell shell)
     {
-        shell.RegisterCommand( new []
-        {
-            Exit(shell),
-            Help(shell),
-            Clear(shell),
-            SysInfo(shell),
-            Echo(shell),
-            UpTime(shell)
-        });
+        shell.RegisterModule(new CoreShellModule());
+        shell.RegisterModule(new DiagnosticsModule());
+        shell.RegisterModule(new UtilityModule());
     }
 
     public static Command Exit(CommandShell shell)
