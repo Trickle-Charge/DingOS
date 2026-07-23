@@ -83,7 +83,9 @@ public sealed class CommandShell : Command
 
         try
         {
-            if(TryParseCommand(commandLine, outputScope.ErrorWriter, out ParseResult parseResult))
+            ParseResult parseResult = Parse(commandLine);
+
+            if(parseResult.Errors.Count == 0)
             {
                 InvocationConfiguration config = new()
                 {
@@ -93,7 +95,11 @@ public sealed class CommandShell : Command
 
                 exitCode = await parseResult.InvokeAsync(config, cancellationToken);
             }
-            else { exitCode = 1; }
+            else
+            {
+                PrintParseErrors(parseResult, outputScope.ErrorWriter);
+                exitCode = 1;
+            }
         }
         finally
         {
@@ -108,18 +114,12 @@ public sealed class CommandShell : Command
         );
     }
 
-    private bool TryParseCommand(string command, TextWriter errorWriter, out ParseResult parseResult)
+    private static void PrintParseErrors(ParseResult parseResult, TextWriter errorWriter)
     {
-        parseResult = Parse(command);
-
-        if(parseResult.Errors.Count <= 0) { return true; }
-
         foreach (ParseError error in parseResult.Errors)
         {
             errorWriter.WriteLine(error.Message);
         }
-
-        return false;
     }
 }
 }
