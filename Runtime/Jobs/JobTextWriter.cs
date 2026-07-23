@@ -28,6 +28,35 @@ public class JobTextWriter : TextWriter
         }
     }
 
+    public override void Write(string? value)
+    {
+        if (string.IsNullOrEmpty(value)) { return; }
+
+        int lastIndex = 0;
+        for (int i = 0; i < value.Length; i++)
+        {
+            switch(value[i])
+            {
+                case '\n':
+                    _lineBuffer.Append(value, lastIndex, i - lastIndex);
+                    FlushBuffer();
+                    lastIndex = i + 1;
+
+                    break;
+                case '\r':
+                    _lineBuffer.Append(value, lastIndex, i - lastIndex);
+                    lastIndex = i + 1;
+
+                    break;
+            }
+        }
+
+        if (lastIndex < value.Length)
+        {
+            _lineBuffer.Append(value, lastIndex, value.Length - lastIndex);
+        }
+    }
+
     public override void WriteLine(string? value)
     {
         if (_lineBuffer.Length > 0)
