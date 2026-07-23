@@ -32,21 +32,24 @@ public class NetworkModule : ICommandModule
         shell.RegisterCommand(netCommand);
     }
 
-    private static readonly Argument<string> s_hostArgument = new("host") { Description = "Hostname or IP address." };
-
     public static Command Connect(
         CommandShell shell,
         IShellContextStack contextStack,
         IDeviceDirectory deviceDirectory)
     {
+        Argument<string> hostArgument = new("host")
+        {
+            Description = "Hostname or IP address."
+        };
+
         Command connectCmd = new("connect", "Spawns a sub-shell session for a host.")
         {
-            s_hostArgument
+            hostArgument
         };
 
         connectCmd.SetAction(parseResult =>
         {
-            string host = parseResult.GetValue(s_hostArgument) ?? string.Empty;
+            string host = parseResult.GetValue(hostArgument) ?? string.Empty;
 
             if(deviceDirectory.TryGetValue(host, out IDevice targetDevice))
             {
@@ -85,11 +88,16 @@ public class NetworkModule : ICommandModule
 
     public static Command PingAsync(CommandShell shell)
     {
-        Command pingCmd = new("ping", "Ping host.") { s_hostArgument };
+        Argument<string> hostArgument = new("host")
+        {
+            Description = "Hostname or IP address."
+        };
+
+        Command pingCmd = new("ping", "Ping host.") { hostArgument };
 
         pingCmd.SetAction(async (parseResult, cancellationToken) =>
         {
-            string host = parseResult.GetValue(s_hostArgument) ?? "unknown";
+            string host = parseResult.GetValue(hostArgument) ?? "unknown";
             Stopwatch sw = new();
 
             for (int i = 1; i <= 5; i++)
