@@ -17,7 +17,7 @@ public class TerminalTextWriter : TextWriter
         _writeLine = writeLine;
     }
 
-    public override void Write(char value) => _write(value.ToString());
+    public override void Write(char value) => Write(value.ToString());
 
     public override void Write(string? value)
     {
