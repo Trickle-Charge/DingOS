@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace TrickleCharge.Sys.DingOS.Terminal
 {
@@ -20,26 +18,19 @@ public class ConsoleTerminal : ITerminal
     public void WriteError(string text)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        _error.WriteLine($"[Error]: {text}");
+        _error.Write($"[Error]: {text}");
         Console.ResetColor();
     }
 
     /// <inheritdoc />
-    public string ReadLine() => Console.ReadLine() ?? string.Empty;
+    public void WriteErrorLine(string text)
+    {
+        WriteError(text);
+        _error.WriteLine();
+    }
 
     /// <inheritdoc />
-    public async Task<string> ReadLineAsync(CancellationToken cancellationToken = default)
-    {
-        Task<string?> readTask = Task.Run<string?>(static () => Console.ReadLine(), cancellationToken);
-        Task completedTask = await Task.WhenAny(readTask, Task.Delay(Timeout.Infinite, cancellationToken));
-
-        if (completedTask != readTask)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-        }
-
-        return await readTask ?? string.Empty;
-    }
+    public string ReadLine() => Console.ReadLine() ?? string.Empty;
 
     /// <inheritdoc />
     public void Clear() => Console.Clear();
