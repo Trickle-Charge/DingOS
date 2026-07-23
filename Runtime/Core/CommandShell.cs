@@ -10,15 +10,18 @@ namespace TrickleCharge.Sys.DingOS
 {
 public sealed class CommandShell : Command
 {
-    /// <summary>
-    /// Gets the output writer for the currently executing command.
-    /// </summary>
-    public TextWriter Out { get; private set; } = TextWriter.Null;
+    private readonly AsyncLocal<TextWriter?> _currentOut = new();
+    private readonly AsyncLocal<TextWriter?> _currentErr = new();
 
     /// <summary>
-    /// Gets the error writer for the currently executing command.
+    /// Gets the output writer for the currently executing async command context.
     /// </summary>
-    public TextWriter Error { get; private set; } = TextWriter.Null;
+    public TextWriter Out => _currentOut.Value ?? TextWriter.Null;
+
+    /// <summary>
+    /// Gets the error writer for the currently executing async command context.
+    /// </summary>
+    public TextWriter Error => _currentErr.Value ?? TextWriter.Null;
 
     /// <summary>
     /// Signals when a command or module requests the screen to be cleared.
@@ -72,8 +75,8 @@ public sealed class CommandShell : Command
 
         using CommandOutputScope outputScope = new(outputWriter, errorWriter);
 
-        Out = outputScope.OutputWriter;
-        Error = outputScope.ErrorWriter;
+        _currentOut.Value = outputScope.OutputWriter;
+        _currentErr.Value = outputScope.ErrorWriter;
 
         int exitCode;
 
@@ -89,8 +92,8 @@ public sealed class CommandShell : Command
         }
         finally
         {
-            Out = TextWriter.Null;
-            Error = TextWriter.Null;
+            _currentOut.Value = TextWriter.Null;
+            _currentErr.Value = TextWriter.Null;
         }
 
         return new ShellResult(
