@@ -1,5 +1,3 @@
-using TrickleCharge.Sys.DingOS.Jobs;
-using TrickleCharge.Sys.DingOS.Jobs.Modules;
 using TrickleCharge.Sys.DingOS.Networking;
 using TrickleCharge.Sys.DingOS.Shell;
 
@@ -11,17 +9,13 @@ public class Device : IDevice
     public string Name { get; }
 
     /// <inheritdoc />
-    public IJobManager JobManager { get; } = new JobManager();
-
-    /// <inheritdoc />
     public IDeviceDirectory NetworkDirectory { get; } = new DeviceDirectory();
 
     /// <inheritdoc />
     public ShellContext RequestShell()
     {
         CommandShell shell = new CommandShell()
-            .WithInteractiveDefaults()
-            .WithModule(new JobControlModule(JobManager));
+            .WithInteractiveDefaults();
 
         ShellContext rootContext = new(
             name: Name,

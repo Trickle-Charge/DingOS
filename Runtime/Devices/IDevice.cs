@@ -6,7 +6,6 @@ namespace TrickleCharge.Sys.DingOS.Devices
 public interface IDevice
 {
     string Name { get; }
-    IJobManager JobManager { get; }
     IDeviceDirectory NetworkDirectory { get; }
     ShellContext RequestShell();
 }
