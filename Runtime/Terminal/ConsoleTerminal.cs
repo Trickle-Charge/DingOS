@@ -17,8 +17,10 @@ public class ConsoleTerminal : ITerminal
     /// <inheritdoc />
     public void WriteError(string text)
     {
+        if (string.IsNullOrEmpty(text)) { return; }
+
         Console.ForegroundColor = ConsoleColor.Red;
-        _error.Write($"[Error]: {text}");
+        _error.Write(text);
         Console.ResetColor();
     }
 
