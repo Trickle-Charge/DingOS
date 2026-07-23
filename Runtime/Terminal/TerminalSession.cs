@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TrickleCharge.Sys.DingOS.Devices;
-using TrickleCharge.Sys.DingOS.Networking.Modules;
+using TrickleCharge.Sys.DingOS.Networking;
 using TrickleCharge.Sys.DingOS.Shell;
 
 namespace TrickleCharge.Sys.DingOS.Terminal

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TrickleCharge.Sys.DingOS.Devices;
 using TrickleCharge.Sys.DingOS.Shell;
 
-namespace TrickleCharge.Sys.DingOS.Networking.Modules
+namespace TrickleCharge.Sys.DingOS.Networking
 {
 public class NetworkModule : ICommandModule
 {
