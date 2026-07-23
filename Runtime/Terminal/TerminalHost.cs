@@ -22,8 +22,8 @@ public sealed class TerminalHost
         _terminal.WriteLine($"Welcome to {SystemInfo.VersionString}");
         _terminal.WriteLine("Type 'help' for available commands or 'exit' to quit.\n");
 
-        await using TerminalTextWriter stdOut = new(_terminal.Write, _terminal.WriteLine);
-        await using TerminalTextWriter stdErr = new(_terminal.WriteError, _terminal.WriteErrorLine);
+        using TerminalTextWriter stdOut = new(_terminal.Write, _terminal.WriteLine);
+        using TerminalTextWriter stdErr = new(_terminal.WriteError, _terminal.WriteErrorLine);
 
         while(ContextStack.CurrentContext != null && ! cancellationToken.IsCancellationRequested)
         {
