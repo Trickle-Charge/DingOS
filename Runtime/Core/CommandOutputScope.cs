@@ -17,8 +17,8 @@ public sealed class CommandOutputScope : IDisposable
         ErrorWriter = customErr ?? (_capturedErr = new StringWriter());
     }
 
-    public string GetOutputText() => _capturedOut?.ToString().TrimEnd() ?? string.Empty;
-    public string GetErrorText() => _capturedErr?.ToString().TrimEnd() ?? string.Empty;
+    public string GetOutputText() => _capturedOut?.ToString() ?? string.Empty;
+    public string GetErrorText() => _capturedErr?.ToString() ?? string.Empty;
 
     public void Dispose()
     {
