@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace TrickleCharge.Sys.DingOS.Terminal
+namespace TrickleCharge.DingOS.Terminal
 {
 public class TerminalTextWriter : TextWriter
 {

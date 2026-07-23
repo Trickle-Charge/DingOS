@@ -1,10 +1,10 @@
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrickleCharge.Sys.DingOS.Shell
+namespace TrickleCharge.DingOS.Shell
 {
-using System;
 public class ShellContext : IShellContext, IDisposable
 {
     public string Name { get; }

@@ -1,4 +1,4 @@
-namespace TrickleCharge.Sys.DingOS
+namespace TrickleCharge.DingOS
 {
 public static class SystemInfo
 {

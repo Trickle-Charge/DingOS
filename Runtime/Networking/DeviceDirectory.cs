@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-using TrickleCharge.Sys.DingOS.Devices;
+using TrickleCharge.DingOS.Devices;
 
-namespace TrickleCharge.Sys.DingOS.Networking
+namespace TrickleCharge.DingOS.Networking
 {
 public class DeviceDirectory : Dictionary<string, IDevice>, IDeviceDirectory { }
 }

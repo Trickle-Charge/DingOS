@@ -1,6 +1,6 @@
-using TrickleCharge.Sys.DingOS.Modules;
+using TrickleCharge.DingOS.Modules;
 
-namespace TrickleCharge.Sys.DingOS.Shell
+namespace TrickleCharge.DingOS.Shell
 {
 public static class CommandShellExtensions
 {

@@ -1,4 +1,4 @@
-namespace TrickleCharge.Sys.DingOS.Modules
+namespace TrickleCharge.DingOS.Modules
 {
 public class SystemModule : ICommandModule
 {

@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <RootNamespace>TrickleCharge.Sys.DingOS</RootNamespace>
-        <AssemblyName>TrickleCharge.Sys.DingOS</AssemblyName>
+        <RootNamespace>TrickleCharge.DingOS</RootNamespace>
+        <AssemblyName>TrickleCharge.DingOS</AssemblyName>
         <Nullable>enable</Nullable>
         <LangVersion>9</LangVersion>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -19,5 +19,19 @@
             <PluginFiles Include="$(TargetDir)System.CommandLine.dll" />
         </ItemGroup>
         <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)Plugins" SkipUnchangedFiles="true" />
+    </Target>
+
+    <Target Name="CopyToUnityProject" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <PropertyGroup>
+            <UnityPluginDir>S:\Dev\Unity\packages\.packages-project\Assets\Plugins\DingOS\</UnityPluginDir>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <OutputFiles Include="$(TargetDir)TrickleCharge.DingOS.dll" />
+            <OutputFiles Include="$(TargetDir)System.CommandLine.dll" />
+        </ItemGroup>
+
+        <MakeDir Directories="$(UnityPluginDir)" />
+        <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(UnityPluginDir)" SkipUnchangedFiles="true" />
     </Target>
 </Project>

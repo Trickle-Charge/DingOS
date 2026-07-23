@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrickleCharge.Sys.DingOS
+namespace TrickleCharge.DingOS
 {
 public sealed class CommandShell : Command
 {

@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace TrickleCharge.Sys.DingOS.Modules
+namespace TrickleCharge.DingOS.Modules
 {
 public class DiagnosticsModule : ICommandModule
 {

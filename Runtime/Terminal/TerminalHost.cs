@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrickleCharge.Sys.DingOS.Terminal
+namespace TrickleCharge.DingOS.Terminal
 {
     public sealed class TerminalHost : IDisposable
     {

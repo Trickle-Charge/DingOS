@@ -1,7 +1,7 @@
-using TrickleCharge.Sys.DingOS.Networking;
-using TrickleCharge.Sys.DingOS.Shell;
+using TrickleCharge.DingOS.Networking;
+using TrickleCharge.DingOS.Shell;
 
-namespace TrickleCharge.Sys.DingOS.Devices
+namespace TrickleCharge.DingOS.Devices
 {
 public class Device : IDevice
 {

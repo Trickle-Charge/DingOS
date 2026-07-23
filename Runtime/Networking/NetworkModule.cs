@@ -4,10 +4,10 @@ using System.CommandLine;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using TrickleCharge.Sys.DingOS.Devices;
-using TrickleCharge.Sys.DingOS.Shell;
+using TrickleCharge.DingOS.Devices;
+using TrickleCharge.DingOS.Shell;
 
-namespace TrickleCharge.Sys.DingOS.Networking
+namespace TrickleCharge.DingOS.Networking
 {
 public class NetworkModule : ICommandModule
 {

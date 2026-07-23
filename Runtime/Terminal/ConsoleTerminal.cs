@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace TrickleCharge.Sys.DingOS.Terminal
+namespace TrickleCharge.DingOS.Terminal
 {
 public class ConsoleTerminal : ITerminal
 {

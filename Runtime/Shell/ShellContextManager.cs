@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TrickleCharge.Sys.DingOS.Shell
+namespace TrickleCharge.DingOS.Shell
 {
 public class ShellContextManager : IShellContextStack
 {
