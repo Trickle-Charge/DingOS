@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Help;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,13 +83,17 @@ public sealed class CommandShell : Command
 
         try
         {
-            InvocationConfiguration config = new()
+            if(TryParseCommand(commandLine, outputScope.ErrorWriter, out ParseResult parseResult))
             {
-                Output = outputScope.OutputWriter,
-                Error = outputScope.ErrorWriter
-            };
+                InvocationConfiguration config = new()
+                {
+                    Output = outputScope.OutputWriter,
+                    Error = outputScope.ErrorWriter
+                };
 
-            exitCode = await Parse(commandLine).InvokeAsync(config, cancellationToken);
+                exitCode = await parseResult.InvokeAsync(config, cancellationToken);
+            }
+            else { exitCode = 1; }
         }
         finally
         {
@@ -101,6 +106,20 @@ public sealed class CommandShell : Command
             outputScope.GetOutputText(),
             outputScope.GetErrorText()
         );
+    }
+
+    private bool TryParseCommand(string command, TextWriter errorWriter, out ParseResult parseResult)
+    {
+        parseResult = Parse(command);
+
+        if(parseResult.Errors.Count <= 0) { return true; }
+
+        foreach (ParseError error in parseResult.Errors)
+        {
+            errorWriter.WriteLine(error.Message);
+        }
+
+        return false;
     }
 }
 }
