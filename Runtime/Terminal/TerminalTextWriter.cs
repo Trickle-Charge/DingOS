@@ -7,6 +7,7 @@ public class TerminalTextWriter : TextWriter
 {
     private readonly ITerminal _terminal;
     private readonly bool _isError;
+    private readonly StringBuilder _lineBuffer = new();
 
     public override Encoding Encoding => Encoding.UTF8;
 
@@ -16,27 +17,15 @@ public class TerminalTextWriter : TextWriter
         _isError = isError;
     }
 
-    public override void WriteLine(string? value)
-    {
-        if (_isError)
-        {
-            _terminal.WriteError(value ?? string.Empty);
-        }
-        else
-        {
-            _terminal.WriteLine(value ?? string.Empty);
-        }
-    }
-
     public override void Write(char value)
     {
-        if (_isError)
+        if (value == '\n')
         {
-            _terminal.WriteError(value.ToString());
+            FlushBuffer();
         }
-        else
+        else if (value != '\r')
         {
-            _terminal.Write(value.ToString());
+            _lineBuffer.Append(value);
         }
     }
 
@@ -44,14 +33,38 @@ public class TerminalTextWriter : TextWriter
     {
         if (string.IsNullOrEmpty(value)) { return; }
 
-        if (_isError)
+        foreach (char c in value) { Write(c); }
+    }
+
+    public override void WriteLine(string? value)
+    {
+        Write(value);
+        FlushBuffer();
+    }
+
+    public override void Flush()
+    {
+        if (_lineBuffer.Length > 0) { FlushBuffer(); }
+    }
+
+    private void FlushBuffer()
+    {
+        string line = _lineBuffer.ToString();
+        _lineBuffer.Clear();
+
+        if (_isError && !string.IsNullOrWhiteSpace(line))
         {
-            _terminal.WriteError(value);
+            _terminal.WriteError(line);
+            return;
         }
-        else
-        {
-            _terminal.Write(value);
-        }
+
+        _terminal.WriteLine(line);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        Flush();
+        base.Dispose(disposing);
     }
 }
 }
