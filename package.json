@@ -1,5 +1,5 @@
 {
-  "name": "com.tricklecharge.sys.dingos",
+  "name": "com.tricklecharge.dingos",
   "displayName": "DingOS",
   "description": "The Dingus platform.",
   "version": "0.0.1",
@@ -7,7 +7,6 @@
   "unityRelease": "10f1",
   "keywords": [
     "tricklecharge",
-    "sys",
     "Dingus",
     "OS",
     "DingOS"

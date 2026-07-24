@@ -1,6 +1,6 @@
 {
-  "name": "TrickleCharge.Sys.DingOS",
-  "rootNamespace": "TrickleCharge.Sys.DingOS",
+  "name": "TrickleCharge.DingOS",
+  "rootNamespace": "TrickleCharge.DingOS",
   "references": [],
   "includePlatforms": [],
   "excludePlatforms": [],
