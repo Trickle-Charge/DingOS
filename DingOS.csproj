@@ -20,18 +20,4 @@
         </ItemGroup>
         <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)Plugins" SkipUnchangedFiles="true" />
     </Target>
-
-    <Target Name="CopyToUnityProject" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-        <PropertyGroup>
-            <UnityPluginDir>S:\Dev\Unity\packages\.packages-project\Assets\Plugins\DingOS\</UnityPluginDir>
-        </PropertyGroup>
-
-        <ItemGroup>
-            <OutputFiles Include="$(TargetDir)TrickleCharge.DingOS.dll" />
-            <OutputFiles Include="$(TargetDir)System.CommandLine.dll" />
-        </ItemGroup>
-
-        <MakeDir Directories="$(UnityPluginDir)" />
-        <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(UnityPluginDir)" SkipUnchangedFiles="true" />
-    </Target>
 </Project>
