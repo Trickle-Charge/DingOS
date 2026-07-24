@@ -1,32 +1,37 @@
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 
 namespace TrickleCharge.DingOS.Modules
 {
-public class CoreShellModule : ICommandModule<CommandShell>
+public class CoreShellModule : ICommandModule<Command>
 {
-    /// <inheritdoc />
-    public void Register(CommandShell shell)
+    private readonly IShell _shell;
+
+    public CoreShellModule(IShell shell)
     {
-        shell.RegisterCommand(new[]
-        {
-            Exit(shell),
-            Clear(shell),
-            Help(shell)
-        });
+        _shell = shell ?? throw new ArgumentNullException(nameof(shell));
     }
 
-    public static Command Exit(CommandShell shell)
+    /// <inheritdoc />
+    public IEnumerable<Command> GetCommands(IShellEnvironment environment)
+    {
+        yield return Exit(environment);
+        yield return Clear(environment);
+        yield return Help(environment, _shell);
+    }
+
+    public static Command Exit(IShellEnvironment environment)
     {
         Command exitCmd = new("exit", "Exits the command shell.");
         exitCmd.Aliases.Add("quit");
 
-        exitCmd.SetAction(_ => shell.RequestQuit());
+        exitCmd.SetAction(_ => environment.RequestQuit());
 
         return exitCmd;
     }
 
-    public static Command Help(CommandShell shell)
+    public static Command Help(IShellEnvironment environment, IShell shell)
     {
         Argument<string[]> topicArg = new("topic")
         {
@@ -42,32 +47,45 @@ public class CoreShellModule : ICommandModule<CommandShell>
 
             if (targetArgs.Length == 0)
             {
-                await shell.ExecuteAsync("--help", shell.Out, shell.Error, cancellationToken);
+                await shell.ExecuteAsync(
+                    "--help",
+                    environment.Out,
+                    environment.Error,
+                    cancellationToken
+                );
+
                 return;
             }
+
+            Command rootCommand = parseResult.RootCommandResult.Command;
 
             string rawQuery = string.Join(" ", targetArgs);
-            ParseResult check = shell.Parse(rawQuery);
+            ParseResult check = rootCommand.Parse(rawQuery);
 
             // Check if topic is invalid (didn't match a subcommand OR has trailing unmatched tokens)
-            if (check.CommandResult.Command == shell || check.UnmatchedTokens.Count > 0)
+            if (check.CommandResult.Command == rootCommand || check.UnmatchedTokens.Count > 0)
             {
-                await shell.Error.WriteLineAsync($"Unrecognized command or topic '{rawQuery}'.");
+                await environment.Error.WriteLineAsync($"Unrecognized command or topic '{rawQuery}'.");
                 return;
             }
 
-            await shell.ExecuteAsync($"{rawQuery} --help", shell.Out, shell.Error, cancellationToken);
+            await shell.ExecuteAsync(
+                $"{rawQuery} --help",
+                environment.Out,
+                environment.Error,
+                cancellationToken
+            );
         });
 
         return helpCmd;
     }
 
-    public static Command Clear(CommandShell shell)
+    public static Command Clear(IShellEnvironment environment)
     {
         Command clearCmd = new("clear", "Clears the terminal screen buffer.");
         clearCmd.Aliases.Add("clr");
 
-        clearCmd.SetAction(_ => shell.RequestClear());
+        clearCmd.SetAction(_ => environment.RequestClear());
 
         return clearCmd;
     }

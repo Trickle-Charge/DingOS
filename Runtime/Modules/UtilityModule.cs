@@ -1,21 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 
 namespace TrickleCharge.DingOS.Modules
 {
-public class UtilityModule : ICommandModule<CommandShell>
+public class UtilityModule : ICommandModule<Command>
 {
     /// <inheritdoc />
-    public void Register(CommandShell shell)
-    {
-        shell.RegisterCommand(new[]
-        {
-            Echo(shell)
-        });
+    public IEnumerable<Command> GetCommands(IShellEnvironment environment) { yield return Echo(environment); }
 
-    }
-
-    public static Command Echo(CommandShell shell)
+    public static Command Echo(IShellEnvironment environment)
     {
         Argument<string[]> textArg = new("text")
         {
@@ -31,7 +25,7 @@ public class UtilityModule : ICommandModule<CommandShell>
         echoCmd.SetAction(parseResult =>
         {
             string[] words = parseResult.GetValue(textArg) ?? Array.Empty<string>();
-            shell.Out.WriteLine(string.Join(" ", words));
+            environment.Out.WriteLine(string.Join(" ", words));
         });
 
         return echoCmd;

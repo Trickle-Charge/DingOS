@@ -1,7 +1,9 @@
+using System.Collections.Generic;
+
 namespace TrickleCharge.DingOS
 {
-public interface ICommandModule<in TShell> where TShell : IShell
+public interface ICommandModule<out TCommand>
 {
-    void Register(TShell shell);
+    IEnumerable<TCommand> GetCommands(IShellEnvironment environment);
 }
 }

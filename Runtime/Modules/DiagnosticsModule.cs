@@ -1,34 +1,33 @@
+using System;
+using System.Collections.Generic;
 using System.CommandLine;
 
 namespace TrickleCharge.DingOS.Modules
 {
-public class DiagnosticsModule : ICommandModule<CommandShell>
+public class DiagnosticsModule : ICommandModule<Command>
 {
     /// <inheritdoc />
-    public void Register(CommandShell shell)
+    public IEnumerable<Command> GetCommands(IShellEnvironment environment)
     {
-        shell.RegisterCommand(new[]
-        {
-            SysInfo(shell),
-            UpTime(shell)
-        });
+        yield return SysInfo(environment);
+        yield return UpTime(environment);
     }
 
-    public static Command SysInfo(CommandShell shell)
+    public static Command SysInfo(IShellEnvironment environment)
     {
         Command sysInfoCmd = new("sysinfo", "Displays system information.");
         sysInfoCmd.Aliases.Add("ver");
 
-        sysInfoCmd.SetAction(_ => shell.Out.WriteLine(SystemInfo.VersionString));
+        sysInfoCmd.SetAction(_ => environment.Out.WriteLine(SystemInfo.VersionString));
 
         return sysInfoCmd;
     }
 
-    public static Command UpTime(CommandShell shell)
+    public static Command UpTime(IShellEnvironment environment)
     {
         Command upTimeCmd = new("uptime", "Displays the system uptime.");
 
-        upTimeCmd.SetAction(_ => shell.Out.WriteLine(shell.Uptime));
+        upTimeCmd.SetAction(_ => environment.Out.WriteLine(DateTime.UtcNow - environment.StartTime));
 
         return upTimeCmd;
     }

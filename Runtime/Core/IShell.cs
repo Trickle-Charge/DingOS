@@ -8,16 +8,6 @@ namespace TrickleCharge.DingOS
 public interface IShell
 {
     /// <summary>
-    /// Gets the output writer for the currently executing async command context.
-    /// </summary>
-    TextWriter Out { get; }
-
-    /// <summary>
-    /// Gets the error writer for the currently executing async command context.
-    /// </summary>
-    TextWriter Error { get; }
-
-    /// <summary>
     /// Signals when a command or module requests the screen to be cleared.
     /// </summary>
     event Action? ClearRequested;
@@ -26,9 +16,6 @@ public interface IShell
     /// Signals when a command or module requests the shell to quit.
     /// </summary>
     event Action? QuitRequested;
-
-    void RequestClear();
-    void RequestQuit();
 
     Task<ShellResult> ExecuteAsync(
         string commandLine,

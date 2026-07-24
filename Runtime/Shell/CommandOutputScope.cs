@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace TrickleCharge.DingOS
+namespace TrickleCharge.DingOS.Shell
 {
 public sealed class CommandOutputScope : IDisposable
 {

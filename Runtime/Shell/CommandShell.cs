@@ -7,9 +7,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrickleCharge.DingOS
+namespace TrickleCharge.DingOS.Shell
 {
-public sealed class CommandShell : Command, IShell
+public sealed class CommandShell : Command, IShell, IShellEnvironment
 {
     private readonly AsyncLocal<TextWriter?> _currentOut = new();
     private readonly AsyncLocal<TextWriter?> _currentErr = new();
@@ -27,7 +27,6 @@ public sealed class CommandShell : Command, IShell
     public event Action? QuitRequested;
 
     public DateTime StartTime { get; } = DateTime.UtcNow;
-    public TimeSpan Uptime => DateTime.UtcNow - StartTime;
 
     public CommandShell(string name = SystemInfo.ApplicationName, string description = SystemInfo.VersionString)
         : base(name, description)
@@ -35,11 +34,14 @@ public sealed class CommandShell : Command, IShell
         Options.Add(new HelpOption());
     }
 
-    public void RegisterModule(ICommandModule<CommandShell> module)
+    public void RegisterModule(ICommandModule<Command> module)
     {
         if (module == null) { throw new ArgumentNullException(nameof(module)); }
 
-        module.Register(this);
+        foreach (Command command in module.GetCommands(this))
+        {
+            RegisterCommand(command);
+        }
     }
 
     public void RegisterCommand(Command command)
