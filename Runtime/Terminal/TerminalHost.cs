@@ -1,30 +1,45 @@
-using System;
+    using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace TrickleCharge.DingOS.Terminal
 {
-    public sealed class TerminalHost : IDisposable
+    public sealed class TerminalHost : ITerminalHost, IDisposable
     {
         private readonly ITerminal _terminal;
-        private readonly TerminalTextWriter _stdOut;
-        private readonly TerminalTextWriter _stdErr;
+        private readonly TextWriter _stdOut;
+        private readonly TextWriter _stdErr;
 
         public IShellContextStack ContextStack { get; }
 
+        private readonly bool _ownsWriters;
+
         public TerminalHost(ITerminal terminal, IShellContextStack contextStack)
+        : this(
+            terminal ?? throw new ArgumentNullException(nameof(terminal)),
+            contextStack,
+            new TerminalTextWriter(terminal.Write, terminal.WriteLine),
+            new TerminalTextWriter(terminal.WriteError, terminal.WriteErrorLine),
+            ownsWriters: true) { }
+
+        public TerminalHost(
+            ITerminal terminal,
+            IShellContextStack contextStack,
+            TextWriter stdOut,
+            TextWriter stdErr,
+            bool ownsWriters = false)
         {
             _terminal = terminal ?? throw new ArgumentNullException(nameof(terminal));
             ContextStack = contextStack ?? throw new ArgumentNullException(nameof(contextStack));
 
-            // Create persistent stream wrappers for this terminal session
-            _stdOut = new TerminalTextWriter(_terminal.Write, _terminal.WriteLine);
-            _stdErr = new TerminalTextWriter(_terminal.WriteError, _terminal.WriteErrorLine);
+            _stdOut = stdOut ?? throw new ArgumentNullException(nameof(stdOut));
+            _stdErr = stdErr ?? throw new ArgumentNullException(nameof(stdErr));
+
+            _ownsWriters = ownsWriters;
         }
 
-        /// <summary>
-        /// Runs a continuous blocking ReadLine loop for OS console environments. (Pull API - CLI Playground)
-        /// </summary>
+        /// <inheritdoc />
         public async Task RunConsoleLoopAsync(CancellationToken cancellationToken = default)
         {
             _terminal.WriteLine($"Welcome to {SystemInfo.VersionString}");
@@ -39,9 +54,7 @@ namespace TrickleCharge.DingOS.Terminal
             }
         }
 
-        /// <summary>
-        /// Executes a single input command against the current active context. (Push API - Unity / UI / Web)
-        /// </summary>
+        /// <inheritdoc />
         public async Task<ShellResult> ExecuteAsync(string input, CancellationToken cancellationToken = default)
         {
             if (ContextStack.CurrentContext == null)
@@ -59,8 +72,11 @@ namespace TrickleCharge.DingOS.Terminal
 
         public void Dispose()
         {
-            _stdOut.Dispose();
-            _stdErr.Dispose();
+            if (_ownsWriters)
+            {
+                _stdOut.Dispose();
+                _stdErr.Dispose();
+            }
         }
     }
 }
