@@ -1,5 +1,6 @@
 using System.CommandLine;
 
+using TrickleCharge.DingOS.Core;
 using TrickleCharge.DingOS.Modules;
 
 namespace TrickleCharge.DingOS.Shell

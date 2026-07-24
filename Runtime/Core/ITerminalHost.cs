@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrickleCharge.DingOS
+namespace TrickleCharge.DingOS.Core
 {
 public interface ITerminalHost
 {

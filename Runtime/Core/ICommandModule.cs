@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TrickleCharge.DingOS
+namespace TrickleCharge.DingOS.Core
 {
 public interface ICommandModule<out TCommand>
 {

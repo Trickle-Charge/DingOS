@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TrickleCharge.DingOS.Core;
+
 namespace TrickleCharge.DingOS.Shell
 {
 public class ShellContext : IShellContext, IDisposable

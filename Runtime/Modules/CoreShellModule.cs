@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 
+using TrickleCharge.DingOS.Core;
+
 namespace TrickleCharge.DingOS.Modules
 {
 public class CoreShellModule : ICommandModule<Command>

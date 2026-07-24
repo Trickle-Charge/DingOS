@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 
+using TrickleCharge.DingOS.Core;
+
 namespace TrickleCharge.DingOS.Terminal
 {
 public class ConsoleTerminal : ITerminal

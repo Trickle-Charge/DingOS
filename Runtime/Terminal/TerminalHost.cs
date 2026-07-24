@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TrickleCharge.DingOS.Core;
+
 namespace TrickleCharge.DingOS.Terminal
 {
     public sealed class TerminalHost : ITerminalHost, IDisposable
