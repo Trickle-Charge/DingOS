@@ -1,7 +1,7 @@
 namespace TrickleCharge.DingOS
 {
-public interface ICommandModule
+public interface ICommandModule<in TShell> where TShell : IShell
 {
-    void Register(CommandShell shell);
+    void Register(TShell shell);
 }
 }

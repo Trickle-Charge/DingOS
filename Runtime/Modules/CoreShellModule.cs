@@ -3,8 +3,9 @@ using System.CommandLine;
 
 namespace TrickleCharge.DingOS.Modules
 {
-public class CoreShellModule : ICommandModule
+public class CoreShellModule : ICommandModule<CommandShell>
 {
+    /// <inheritdoc />
     public void Register(CommandShell shell)
     {
         shell.RegisterCommand(new[]

@@ -1,6 +1,6 @@
 namespace TrickleCharge.DingOS.Modules
 {
-public class SystemModule : ICommandModule
+public class SystemModule : ICommandModule<CommandShell>
 {
     /// <inheritdoc />
     public void Register(CommandShell shell)

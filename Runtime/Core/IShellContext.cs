@@ -9,7 +9,7 @@ public interface IShellContext
 {
     string Name { get; }
     string Prompt { get; }
-    CommandShell CommandShell { get; }
+    IShell Shell { get; }
 
     event Action? ClearRequested;
     event Action? QuitRequested;

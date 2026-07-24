@@ -12,7 +12,7 @@ public static class CommandShellExtensions
     /// <summary>
     /// Helper for fluent module registration.
     /// </summary>
-    public static CommandShell WithModule(this CommandShell shell, ICommandModule module)
+    public static CommandShell WithModule(this CommandShell shell, ICommandModule<CommandShell> module)
     {
         shell.RegisterModule(module);
         return shell;

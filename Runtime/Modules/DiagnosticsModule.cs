@@ -2,8 +2,9 @@ using System.CommandLine;
 
 namespace TrickleCharge.DingOS.Modules
 {
-public class DiagnosticsModule : ICommandModule
+public class DiagnosticsModule : ICommandModule<CommandShell>
 {
+    /// <inheritdoc />
     public void Register(CommandShell shell)
     {
         shell.RegisterCommand(new[]

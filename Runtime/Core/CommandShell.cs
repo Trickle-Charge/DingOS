@@ -9,29 +9,21 @@ using System.Threading.Tasks;
 
 namespace TrickleCharge.DingOS
 {
-public sealed class CommandShell : Command
+public sealed class CommandShell : Command, IShell
 {
     private readonly AsyncLocal<TextWriter?> _currentOut = new();
     private readonly AsyncLocal<TextWriter?> _currentErr = new();
 
-    /// <summary>
-    /// Gets the output writer for the currently executing async command context.
-    /// </summary>
+    /// <inheritdoc />
     public TextWriter Out => _currentOut.Value ?? TextWriter.Null;
 
-    /// <summary>
-    /// Gets the error writer for the currently executing async command context.
-    /// </summary>
+    /// <inheritdoc />
     public TextWriter Error => _currentErr.Value ?? TextWriter.Null;
 
-    /// <summary>
-    /// Signals when a command or module requests the screen to be cleared.
-    /// </summary>
+    /// <inheritdoc />
     public event Action? ClearRequested;
 
-    /// <summary>
-    /// Signals when a command or module requests the shell to quit.
-    /// </summary>
+    /// <inheritdoc />
     public event Action? QuitRequested;
 
     public DateTime StartTime { get; } = DateTime.UtcNow;
@@ -43,7 +35,7 @@ public sealed class CommandShell : Command
         Options.Add(new HelpOption());
     }
 
-    public void RegisterModule(ICommandModule module)
+    public void RegisterModule(ICommandModule<CommandShell> module)
     {
         if (module == null) { throw new ArgumentNullException(nameof(module)); }
 
