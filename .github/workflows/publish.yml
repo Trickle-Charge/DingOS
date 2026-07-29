@@ -1,0 +1,18 @@
+name: Publish Package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'Runtime/**'
+      - 'Editor/**'
+  
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: Trickle-Charge/TrickleCharge-Infra/.github/workflows/publish-upm-packages.yml@main
+    with:
+      package-path: '.'
+    secrets: inherit
