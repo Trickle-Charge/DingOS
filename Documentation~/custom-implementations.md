@@ -10,16 +10,57 @@ Whether you are building a custom UI backend (e.g., Unity UI Toolkit, ImGui, Web
 
 `DingOS` uses a decoupled pipe-and-filter architecture:
 
+<details>
+<summary>Click to view ASCII Diagram</summary>
+
 ```text
-[ Input / Output Device ] <---> ITerminal
-                                    |
-                            IShellContextStack
-                                    |
-                             IShellContext
-                                    |
-                                 IShell
-                                    |
-                           ICommandModule<T>
+[ Device / Display ]
+        ^
+        | (Raw Keys / Screen Output)
+        v
+  +-----------+
+  | ITerminal | <===================================+
+  +-----+-----+                                     |
+        |                                           |
+        | (Input Lines / Events)                    |
+        v                                           |
+ +--------------+   Manages   +--------------------+|
+ | ITerminalHost| ----------> | IShellContextStack ||
+ +--------------+             +---------+----------+|
+                                        |           |
+                                        v (Active)  |
+                              +--------------------+|
+                              |   IShellContext    ||
+                              +---------+----------+|
+                                        |           |
+                                        v           |
+                              +--------------------+|
+                              |       IShell       ||
+                              +---------+----------+|
+                                        |           |
+                                        v (Executes)|
+                              +--------------------+|
+                              | ICommandModule<T>  ||
+                              +---------+----------+|
+                                        |           |
+                                        +-----------+
+                                    (StdOut / StdErr)
+```
+
+</details>
+
+```mermaid
+graph TD
+  Device[Device / Display] <-->|Raw Input / Screen Output| Terminal[ITerminal]
+
+  subgraph Engine Core
+    Terminal <-->|Input Lines / Events| Host[ITerminalHost]
+    Host -->|Manages| Stack[IShellContextStack]
+    Stack -->|Active Context| Context[IShellContext]
+    Context -->|Delegates to| Shell[IShell]
+    Shell -->|Executes| Modules["ICommandModule&lt;T&gt;"]
+    Modules -.->|Writes StdOut / StdErr| Terminal
+  end
 ```
 
 ---
