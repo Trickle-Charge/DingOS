@@ -65,7 +65,7 @@ graph TD
 
 ---
 
-## 1. Implementing `ITerminal`
+## Implementing `ITerminal`
 
 `ITerminal` defines low-level string I/O and screen clearing mechanics. Implement this interface to pipe output into UI text elements, network sockets, or custom logs.
 
@@ -144,7 +144,7 @@ public class UIBufferTerminal : ITerminal
 
 ---
 
-## 2. Implementing `IShell`
+## Implementing `IShell`
 
 `IShell` is responsible for receiving raw command strings, parsing arguments, invoking execution logic, 
 and emitting control signals.
@@ -181,7 +181,7 @@ when execution requires exiting or popping the context stack.
 
 ---
 
-## 3. Implementing `IShellContext`
+## Implementing `IShellContext`
 
 `IShellContext` represents an active modal execution scope on the context stack. It couples a named environment prompt to an underlying `IShell` execution engine.
 
@@ -219,7 +219,7 @@ namespace TrickleCharge.DingOS.Core
 
 ---
 
-## 4. Implementing `IShellContextStack`
+## Implementing `IShellContextStack`
 
 `IShellContextStack` manages the lifetime and navigation hierarchy of `IShellContext` instances (e.g., entering sub-shells, SSH sessions, or modal prompts).
 
@@ -255,7 +255,7 @@ and invoke Dispose() prior to activating the underlying context.
 
 ---
 
-## 5. Implementing `ITerminalHost`
+## Implementing `ITerminalHost`
 
 `ITerminalHost` bridges `ITerminal` and `IShellContextStack` together. It acts as the primary API endpoint for both CLI pull loops and event-driven push architectures.
 
@@ -285,7 +285,7 @@ When implementing `ExecuteAsync(string input, CancellationToken cancellationToke
 
 ---
 
-## 6. Writing Custom Command Modules (`ICommandModule<T>`)
+## Writing Custom Command Modules (`ICommandModule<T>`)
 
 Command modules define grouped commands. Modules implement `ICommandModule<TCommand>`, where `TCommand` corresponds to 
 your shell's command definition type (e.g., `System.CommandLine.Command`).
