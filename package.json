@@ -17,6 +17,7 @@
     "url": "https://github.com/pog7776"
   },
   "homepage": "https://github.com/Trickle-Charge",
+  "repository": "https://github.com/Trickle-Charge/DingOS",
   "publishConfig": {
     "registry": "https://npm.tricklecharge.dev/"
   },
