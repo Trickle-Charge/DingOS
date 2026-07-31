@@ -1,5 +1,7 @@
 # DingOS
 
+[📖 Documentation](https://docs.tricklecharge.dev/dingos/Documentation~/)
+
 **DingOS** is a decoupled terminal architecture and context stack manager for .NET and Unity applications. 
 It separates user input/output interfaces from command parsing and execution logic, 
 allowing you to host interactive shell environments in standalone CLI applications, 
