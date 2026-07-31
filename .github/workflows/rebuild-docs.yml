@@ -1,0 +1,14 @@
+name: Trigger Documentation Rebuild
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - '**.md'
+  
+  workflow_dispatch:
+
+jobs:
+  rebuild-docs:
+    uses: Trickle-Charge/TrickleCharge-Infra/.github/workflows/trigger-docs-rebuild.yml@main
+    secrets: inherit
