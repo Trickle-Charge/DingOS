@@ -1,6 +1,6 @@
 # DingOS
 
-![Static Badge](https://img.shields.io/badge/DingOS-brightgreen?logo=github&label=GitHub&link=https%3A%2F%2Fgithub.com%2FTrickle-Charge%2FDingOS)
+[![Static Badge](https://img.shields.io/badge/DingOS-brightgreen?logo=github&label=GitHub)](https://github.com/Trickle-Charge/DingOS)
 
 
 **DingOS** is a decoupled terminal architecture and context stack manager for .NET and Unity applications. 
